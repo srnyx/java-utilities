@@ -13,7 +13,7 @@ plugins {
 repositories.mavenCentral()
 dependencies.compileOnly("org.jetbrains:annotations:24.0.1")
 
-setupJava("xyz.srnyx", "0.0.1", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
+setupJava("xyz.srnyx", "1.0.0", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
 setupPublishing(
     artifactId = "srnyx-java-utilities",
     url = "https://java-utilities.srnyx.com",
