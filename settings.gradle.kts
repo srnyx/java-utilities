@@ -1,1 +1,1 @@
-rootProject.name = "srnyxJavaUtilities"
+rootProject.name = "JavaUtilities"

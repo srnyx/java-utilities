@@ -15,7 +15,7 @@ dependencies.compileOnly("org.jetbrains:annotations:24.0.1")
 
 setupJava("xyz.srnyx", "1.0.0", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
 setupPublishing(
-    artifactId = "srnyx-java-utilities",
+    artifactId = "java-utilities",
     url = "https://java-utilities.srnyx.com",
     licenses = listOf(LicenseData.MIT),
     developers = listOf(DeveloperData.srnyx))

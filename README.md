@@ -1,15 +1,15 @@
-# srnyx's Java Utilities [![Release](https://jitpack.io/v/srnyx/srnyx-java-utilities.svg)](https://jitpack.io/#xyz.srnyx/srnyx-java-utilities)
+# srnyx's Java Utilities [![Release](https://jitpack.io/v/srnyx/java-utilities.svg)](https://jitpack.io/#xyz.srnyx/java-utilities)
 
 A general Java utility library for srnyx's projects
 
 ### Wiki / Javadocs
 
-- **Wiki:** [github.com/srnyx/srnyx-java-utilities/wiki](https://github.com/srnyx/srnyx-java-utilities/wiki)
-- **Javadocs:** [javadoc.jitpack.io/xyz/srnyx/srnyx-java-utilities/latest/javadoc/index.html](https://javadoc.jitpack.io/xyz/srnyx/srnyx-java-utilities/latest/javadoc/index.html)
+- **Wiki:** [github.com/srnyx/java-utilities/wiki](https://github.com/srnyx/java-utilities/wiki)
+- **Javadocs:** [javadoc.jitpack.io/xyz/srnyx/java-utilities/latest/javadoc/index.html](https://javadoc.jitpack.io/xyz/srnyx/java-utilities/latest/javadoc/index.html)
 
 ## Importing
 
-You can import the library using [Jitpack](https://jitpack.io/#xyz.srnyx/srnyx-java-utilities). Make sure to replace `VERSION` with the version you want. You **MUST** use `implementation`.
+You can import the library using [Jitpack](https://jitpack.io/#xyz.srnyx/java-utilities). Make sure to replace `VERSION` with the version you want. You **MUST** use `implementation`.
 
 - **Gradle Kotlin** (`build.gradle.kts`)**:**
 ```kotlin
@@ -24,7 +24,7 @@ repositories {
 }
 // Lazy Library dependency declaration
 dependencies {
-  implementation("xyz.srnyx", "srnyx-java-utilities", "VERSION")
+  implementation("xyz.srnyx", "java-utilities", "VERSION")
 }
 ```
 - **Gradle Groovy** (`build.gradle`)**:**
@@ -40,7 +40,7 @@ repositories {
 }
 // Lazy Library dependency declaration
 dependencies {
-  implementation 'xyz.srnyx:srnyx-java-utilities:VERSION'
+  implementation 'xyz.srnyx:java-utilities:VERSION'
 }
 ```
 * **Maven** (`pom.xml`)**:**
@@ -89,7 +89,7 @@ dependencies {
     <dependencies>
         <dependency>
             <groupId>xyz.srnyx</groupId>
-            <artifactId>srnyx-java-utilities</artifactId>
+            <artifactId>java-utilities</artifactId>
             <version>VERSION</version>
         </dependency>
     </dependencies>
