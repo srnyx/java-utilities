@@ -129,6 +129,33 @@ public class HttpUtility {
     }
 
     /**
+     * Sends a PATCH request to the specified URL with the specified {@link JsonElement JSON data}
+     *
+     * @param   userAgent   the user agent to use
+     * @param   urlString   the URL to send the PATCH request to
+     * @param   data        the {@link JsonElement JSON data} to send with the PATCH request
+     *
+     * @return              the response code of the request
+     */
+    public static int patchJson(@NotNull String userAgent, @NotNull String urlString, @NotNull JsonElement data) {
+        int responseCode = -1;
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
+            connection.setRequestMethod("PATCH");
+            connection.setRequestProperty("User-Agent", userAgent);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(data.toString().getBytes());
+            responseCode = connection.getResponseCode();
+        } catch (final IOException ignored) {
+            // Ignored
+        }
+        if (connection != null) connection.disconnect();
+        return responseCode;
+    }
+
+    /**
      * Sends a DELETE request to the specified URL
      *
      * @param   userAgent   the user agent to use
