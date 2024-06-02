@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,11 +41,13 @@ public class FileUtility {
     @NotNull
     public static Set<String> getFileNames(@NotNull File file, @NotNull String extension) {
         final File[] files = file.listFiles();
-        if (files == null) return new HashSet<>();
+        if (files == null) return Collections.emptySet();
+        final String fullExtension = "." + extension;
+        final int extensionLength = fullExtension.length();
         return Arrays.stream(files)
                 .map(File::getName)
-                .filter(name -> name.endsWith("." + extension))
-                .map(name -> name.substring(0, name.length() - 4))
+                .filter(name -> name.endsWith(fullExtension))
+                .map(name -> name.substring(0, name.length() - extensionLength))
                 .collect(Collectors.toSet());
     }
 
