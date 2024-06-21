@@ -21,12 +21,16 @@ public class FileUtility {
      *
      * @param   path        the path to the file
      * @param   silentFail  if true, the error will be printed if the task fails
+     *
+     * @return              true if the file was deleted, false otherwise
      */
-    public static void deleteFile(@NotNull Path path, boolean silentFail) {
+    public static boolean deleteFile(@NotNull Path path, boolean silentFail) {
         try {
             Files.delete(path);
+            return true;
         } catch (final IOException e) {
             if (!silentFail) e.printStackTrace();
+            return false;
         }
     }
 
