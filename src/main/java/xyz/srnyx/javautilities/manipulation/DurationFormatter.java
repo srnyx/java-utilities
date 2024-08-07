@@ -56,28 +56,31 @@ public class DurationFormatter {
      */
     @NotNull
     public static String formatDuration(long durationMillis, @NotNull String format, boolean padWithZeros) {
+        // Get tokens
         final char[] array = format.toCharArray();
-        final List<Token> list = new ArrayList<>(array.length);
-
+        final List<Token> tokens = new ArrayList<>(array.length);
         boolean inLiteral = false;
-        StringBuilder lexxBuilder = null;
+        StringBuilder literalBuilder = null;
         Token previous = null;
-        for (final char ch : array) {
-            if (inLiteral && ch != '\'') {
-                lexxBuilder.append(ch);
+        for (final char character : array) {
+            // Literal
+            if (inLiteral && character != '\'') {
+                literalBuilder.append(character);
                 continue;
             }
 
-            switch (ch) {
+            switch (character) {
                 case '\'':
+                    // Literal
                     if (inLiteral) {
-                        lexxBuilder = null;
                         inLiteral = false;
+                        literalBuilder = null;
                     } else {
-                        lexxBuilder = new StringBuilder();
-                        list.add(new Token(lexxBuilder));
                         inLiteral = true;
+                        literalBuilder = new StringBuilder();
+                        tokens.add(new Token(literalBuilder, true));
                     }
+                    previous = null;
                     break;
                 case 'y':
                 case 'M':
@@ -86,25 +89,30 @@ public class DurationFormatter {
                 case 'm':
                 case 's':
                 case 'S':
-                    final String value = String.valueOf(ch);
+                    literalBuilder = null;
+
+                    // Same as previous token, increment count
+                    final String value = String.valueOf(character);
                     if (previous != null && previous.value.toString().equals(value)) {
                         previous.count++;
-                    } else {
-                        final Token token = new Token(new StringBuilder(value));
-                        list.add(token);
-                        previous = token;
+                        break;
                     }
-                    lexxBuilder = null;
+
+                    // New token
+                    final Token token = new Token(new StringBuilder(value), false);
+                    tokens.add(token);
+                    previous = token;
                     break;
                 default:
-                    if (lexxBuilder == null) {
-                        lexxBuilder = new StringBuilder();
-                        list.add(new Token(lexxBuilder));
+                    // Doesn't match any token, treat as literal
+                    if (literalBuilder == null) {
+                        literalBuilder = new StringBuilder();
+                        tokens.add(new Token(literalBuilder, true));
                     }
-                    lexxBuilder.append(ch);
+                    literalBuilder.append(character);
+                    previous = null;
             }
         }
-        final Token[] tokens = list.toArray(new Token[0]);
 
         int years = 0;
         int months = 0;
@@ -151,6 +159,13 @@ public class DurationFormatter {
         boolean lastOutputSeconds = false;
         for (final Token token : tokens) {
             final String value = token.value.toString();
+
+            // Literal
+            if (token.literal) {
+                builder.append(value);
+                continue;
+            }
+
             final int count = token.count;
             switch (value) {
                 case "y":
@@ -212,14 +227,16 @@ public class DurationFormatter {
     private static class Token {
         @NotNull private final StringBuilder value;
         private int count = 1;
+        private final boolean literal;
 
         /**
          * Wraps a token around a value. A value would be something like a 'Y'
          *
          * @param   value   to wrap
          */
-        private Token(@NotNull StringBuilder value) {
+        private Token(@NotNull StringBuilder value, boolean literal) {
             this.value = value;
+            this.literal = literal;
         }
 
         /**
@@ -231,8 +248,8 @@ public class DurationFormatter {
          * @return          boolean <code>true</code> if contained
          */
         @Contract(pure = true)
-        static boolean containsTokenWithValue(@NotNull Token[] tokens, @NotNull String value) {
-            for (final Token token : tokens) if (token.value.toString().equals(value)) return true;
+        static boolean containsTokenWithValue(@NotNull List<Token> tokens, @NotNull String value) {
+            for (final Token token : tokens) if (!token.literal && token.value.toString().equals(value)) return true;
             return false;
         }
     }
