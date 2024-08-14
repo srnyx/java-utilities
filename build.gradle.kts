@@ -6,8 +6,8 @@ import xyz.srnyx.gradlegalaxy.utility.setupPublishing
 
 plugins {
     java
-    id("xyz.srnyx.gradle-galaxy") version "1.2.2"
-    id("io.github.goooler.shadow") version "8.1.8"
+    id("xyz.srnyx.gradle-galaxy") version "1.2.3"
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 setupJava("xyz.srnyx", "1.1.0", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
