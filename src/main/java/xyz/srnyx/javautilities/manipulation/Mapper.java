@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.javautilities.MiscUtility;
 
+import java.util.Optional;
+
 
 /**
  * A utility class for converting {@link Object Objects} to other types
@@ -20,9 +22,9 @@ public class Mapper {
      *
      * @param   <T>     the type of the {@link Class}
      */
-    @Nullable
-    public static <T> T to(@Nullable Object object, @NotNull Class<T> clazz) {
-        return !clazz.isInstance(object) ? null : MiscUtility.handleException(() -> clazz.cast(object));
+    @NotNull
+    public static <T> Optional<T> to(@Nullable Object object, @NotNull Class<T> clazz) {
+        return !clazz.isInstance(object) ? Optional.empty() : MiscUtility.handleException(() -> clazz.cast(object));
     }
 
     /**
@@ -32,9 +34,9 @@ public class Mapper {
      *
      * @return          the {@link Integer} or {@code null}
      */
-    @Nullable
-    public static Integer toInt(@Nullable Object object) {
-        return object == null ? null : MiscUtility.handleException(() -> Integer.parseInt(object.toString()));
+    @NotNull
+    public static Optional<Integer> toInt(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Integer.parseInt(object.toString()));
     }
 
     /**
@@ -44,9 +46,9 @@ public class Mapper {
      *
      * @return          the {@link Double} or {@code null}
      */
-    @Nullable
-    public static Double toDouble(@Nullable Object object) {
-        return object == null ? null : MiscUtility.handleException(() -> Double.parseDouble(object.toString()));
+    @NotNull
+    public static Optional<Double> toDouble(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Double.parseDouble(object.toString()));
     }
 
     /**
@@ -56,9 +58,9 @@ public class Mapper {
      *
      * @return          the {@link Long} or {@code null}
      */
-    @Nullable
-    public static Long toLong(@Nullable Object object) {
-        return object == null ? null : MiscUtility.handleException(() -> Long.parseLong(object.toString()));
+    @NotNull
+    public static Optional<Long> toLong(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Long.parseLong(object.toString()));
     }
 
     private Mapper() {

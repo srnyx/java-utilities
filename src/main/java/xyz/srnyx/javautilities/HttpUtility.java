@@ -5,13 +5,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,21 +31,21 @@ public class HttpUtility {
      *
      * @return              the result of the specified function, or null if the request failed
      */
-    @Nullable
-    public static <T> T get(@NotNull String userAgent, @NotNull String url, Function<InputStreamReader, T> function) {
+    @NotNull
+    public static <T> Optional<T> get(@NotNull String userAgent, @NotNull String url, Function<InputStreamReader, T> function) {
         T result = null;
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", userAgent);
-            if (connection.getResponseCode() == 404) return null;
+            if (connection.getResponseCode() == 404) return Optional.empty();
             result = function.apply(new InputStreamReader(connection.getInputStream()));
         } catch (final IOException ignored) {
             // Ignored
         }
         if (connection != null) connection.disconnect();
-        return result;
+        return Optional.ofNullable(result);
     }
 
     /**
@@ -56,8 +56,8 @@ public class HttpUtility {
      *
      * @return              the {@link String}, or null if the request failed
      */
-    @Nullable
-    public static String getString(@NotNull String userAgent, @NotNull String urlString) {
+    @NotNull
+    public static Optional<String> getString(@NotNull String userAgent, @NotNull String urlString) {
         return get(userAgent, urlString, reader -> new BufferedReader(reader).lines().collect(Collectors.joining("\n")));
     }
 
@@ -69,8 +69,8 @@ public class HttpUtility {
      *
      * @return              the {@link JsonElement} retrieved from the specified URL
      */
-    @Nullable
-    public static JsonElement getJson(@NotNull String userAgent, @NotNull String urlString) {
+    @NotNull
+    public static Optional<JsonElement> getJson(@NotNull String userAgent, @NotNull String urlString) {
         return get(userAgent, urlString, reader -> new JsonParser().parse(reader));
     }
 

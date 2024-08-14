@@ -52,7 +52,7 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
         this.patch = split.length > 2 ? Integer.parseInt(split[2]) : 0;
     }
 
-    @Override
+    @Override @NotNull
     public String toString() {
         return version;
     }

@@ -1,10 +1,10 @@
 package xyz.srnyx.javautilities.manipulation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,21 +42,21 @@ public class DurationParser {
      *
      * @return          the parsed duration, or {@code null} if the string is invalid
      */
-    @Nullable
-    public static Duration parse(@NotNull String input) {
+    @NotNull
+    public static Optional<Duration> parse(@NotNull String input) {
         final Matcher matcher = PATTERN.matcher(input);
-        if (!matcher.matches()) return null;
+        if (!matcher.matches()) return Optional.empty();
 
         Duration duration = Duration.ZERO;
         for (int i = 0; i < DURATIONS_LENGTH; i++) {
             final String group = matcher.group(i + 1);
             if (group != null && !group.isEmpty()) {
-                final Integer number = Mapper.toInt(group);
-                if (number != null) duration = duration.plus(DURATIONS[i].multipliedBy(number));
+                final Optional<Integer> number = Mapper.toInt(group);
+                if (number.isPresent()) duration = duration.plus(DURATIONS[i].multipliedBy(number.get()));
             }
         }
 
-        return duration;
+        return Optional.of(duration);
     }
 
     private DurationParser() {
