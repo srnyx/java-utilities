@@ -14,21 +14,37 @@ import java.util.stream.Collectors;
  */
 public class MiscUtility {
     /**
-     * If an exception is thrown by the {@link Supplier}, {@code null} is returned
+     * If specific throwables are thrown by the {@link Supplier}, {@code null} is returned
+     *
+     * @param   supplier    the {@link Supplier} to execute
+     * @param   throwables  the specific {@link Throwable}s to catch
+     *
+     * @return              the result of the {@link Supplier} or empty
+     *
+     * @param   <R>         the type of the result
+     */
+    @NotNull @SafeVarargs
+    public static <R> Optional<R> handleException(@NotNull Supplier<R> supplier, @NotNull Class<? extends Throwable>... throwables) {
+        try {
+            return Optional.ofNullable(supplier.get());
+        } catch (final Exception e) {
+            for (final Class<? extends Throwable> throwable : throwables) if (throwable.isInstance(e)) return Optional.empty();
+            throw e;
+        }
+    }
+
+    /**
+     * If an {@link Exception} is thrown by the {@link Supplier}, {@code null} is returned
      *
      * @param   supplier    the {@link Supplier} to execute
      *
-     * @return              the result of the {@link Supplier} or {@code null}
+     * @return              the result of the {@link Supplier} or empty
      *
      * @param   <R>         the type of the result
      */
     @NotNull
     public static <R> Optional<R> handleException(@NotNull Supplier<R> supplier) {
-        try {
-            return Optional.ofNullable(supplier.get());
-        } catch (final Exception ignored) {
-            return Optional.empty();
-        }
+        return handleException(supplier, Exception.class);
     }
 
     /**
