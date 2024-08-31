@@ -25,10 +25,10 @@ public class StringUtility {
     }
 
     /**
-     * Formats a {@link Double} value using the given pattern
+     * Formats a {@link Number} value using the given pattern
      *
      * @param   value   the {@link Number} to format
-     * @param   pattern the pattern to use
+     * @param   pattern the pattern to use (if null: {@code #,###.##})
      *
      * @return          the formatted value
      */
@@ -39,15 +39,28 @@ public class StringUtility {
     }
 
     /**
-     * Shortens a string to a given length, adding "..." at the end ("..." is included in the length)
+     * Formats a {@link Number} value using {@code #,###.##}
+     *
+     * @param   value   the {@link Number} to format
+     *
+     * @return          the formatted value
+     */
+    @NotNull
+    public static String formatNumber(@NotNull Number value) {
+        return formatNumber(value, null);
+    }
+
+    /**
+     * Shortens a string to a given length, adding {@code ...} at the end (included in the length)
      *
      * @param   string  the string to shorten
      * @param   length  the length to shorten to
      *
-     * @return          the shortened string
+     * @return          the shortened string with {@code ...} at the end
      */
     @NotNull
     public static String shorten(@NotNull String string, int length) {
+        if (length < 3) throw new IllegalArgumentException("Length must be at least 3");
         return string.length() + 3 > length ? string.substring(0, length - 3) + "..." : string;
     }
 
