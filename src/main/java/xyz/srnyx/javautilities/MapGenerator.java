@@ -3,10 +3,7 @@ package xyz.srnyx.javautilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 
@@ -20,7 +17,11 @@ public class MapGenerator {
      */
     @NotNull public static final MapGenerator HASH_MAP = new MapGenerator(HashMap::new);
     /**
-     * Default map generator for {@link TreeMap} (sorted)
+     * Default map generator for {@link LinkedHashMap} (sorted by insertion order)
+     */
+    @NotNull public static final MapGenerator LINKED_HASH_MAP = new MapGenerator(LinkedHashMap::new);
+    /**
+     * Default map generator for {@link TreeMap} (sorted by natural order)
      */
     @NotNull public static final MapGenerator TREE_MAP = new MapGenerator(TreeMap::new);
 
