@@ -1,6 +1,7 @@
 package xyz.srnyx.javautilities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MapUtility {
      * @param   <G>     the type of the value
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         return map;
@@ -62,7 +63,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -85,7 +86,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -111,7 +112,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -140,7 +141,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -172,7 +173,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5, @NotNull T key6, @NotNull G value6) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5, @NotNull T key6, @Nullable G value6) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -207,7 +208,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5, @NotNull T key6, @NotNull G value6, @NotNull T key7, @NotNull G value7) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5, @NotNull T key6, @Nullable G value6, @NotNull T key7, @Nullable G value7) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -245,7 +246,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5, @NotNull T key6, @NotNull G value6, @NotNull T key7, @NotNull G value7, @NotNull T key8, @NotNull G value8) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5, @NotNull T key6, @Nullable G value6, @NotNull T key7, @Nullable G value7, @NotNull T key8, @Nullable G value8) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -286,7 +287,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5, @NotNull T key6, @NotNull G value6, @NotNull T key7, @NotNull G value7, @NotNull T key8, @NotNull G value8, @NotNull T key9, @NotNull G value9) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5, @NotNull T key6, @Nullable G value6, @NotNull T key7, @Nullable G value7, @NotNull T key8, @Nullable G value8, @NotNull T key9, @Nullable G value9) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
@@ -330,7 +331,7 @@ public class MapUtility {
      * @param   <G>     the type of the values
      */
     @NotNull
-    public static <T, G> Map<T, G> mapOf(@NotNull T key, @NotNull G value, @NotNull T key2, @NotNull G value2, @NotNull T key3, @NotNull G value3, @NotNull T key4, @NotNull G value4, @NotNull T key5, @NotNull G value5, @NotNull T key6, @NotNull G value6, @NotNull T key7, @NotNull G value7, @NotNull T key8, @NotNull G value8, @NotNull T key9, @NotNull G value9, @NotNull T key10, @NotNull G value10) {
+    public static <T, G> Map<T, G> mapOf(@NotNull T key, @Nullable G value, @NotNull T key2, @Nullable G value2, @NotNull T key3, @Nullable G value3, @NotNull T key4, @Nullable G value4, @NotNull T key5, @Nullable G value5, @NotNull T key6, @Nullable G value6, @NotNull T key7, @Nullable G value7, @NotNull T key8, @Nullable G value8, @NotNull T key9, @Nullable G value9, @NotNull T key10, @Nullable G value10) {
         final Map<T, G> map = new HashMap<>();
         map.put(key, value);
         map.put(key2, value2);
