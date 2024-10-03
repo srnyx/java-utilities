@@ -10,7 +10,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.3"
 }
 
-setupJava("xyz.srnyx", "1.1.0", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
+setupJava("xyz.srnyx", "2.0.0", "General Java utility library for srnyx's projects", JavaVersion.VERSION_1_8)
 
 repositories.mavenCentral()
 dependencies {
