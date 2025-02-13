@@ -53,6 +53,24 @@ public class MapGenerator {
     }
 
     /**
+     * Generates a map from a list of keys and values (alternating)
+     * <br><b>This method is not type-safe and may throw {@link ClassCastException}!</b>
+     *
+     * @param   keysValues  the list of keys and values (key1, value1, key2, value2, ...)
+     *
+     * @return              the generated map
+     *
+     * @param   <T>         the type of the keys
+     * @param   <G>         the type of the values
+     */
+    @NotNull
+    public <T, G> Map<T, G> mapOf(@NotNull List<?> keysValues) {
+        final Map<T, G> map = mapOf();
+        for (int i = 0; i < keysValues.size(); i += 2) map.put((T) keysValues.get(i), (G) keysValues.get(i + 1));
+        return map;
+    }
+
+    /**
      * Generates a map from a list of keys and a list of values
      *
      * @param   keys    the list of keys
