@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
  * Utility class for making HTTP requests
  */
 public class HttpUtility {
+    public static final boolean DEBUG = false;
+
     /**
      * Sends a GET request to the specified URL and returns the result of the specified function
      *
@@ -43,10 +45,13 @@ public class HttpUtility {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", userAgent);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
-            if (connection.getResponseCode() == 404) return Optional.empty();
+            if (connection.getResponseCode() == 404) {
+                if (DEBUG) System.out.println("[JU] 404: " + url);
+                return Optional.empty();
+            }
             result = function.apply(new InputStreamReader(connection.getInputStream()));
-        } catch (final IOException ignored) {
-            // Ignored
+        } catch (final IOException e) {
+            if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
         return Optional.ofNullable(result);
@@ -102,8 +107,8 @@ public class HttpUtility {
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
-        } catch (final IOException ignored) {
-            // Ignored
+        } catch (final IOException e) {
+            if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
         return responseCode;
@@ -131,8 +136,8 @@ public class HttpUtility {
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
-        } catch (final IOException ignored) {
-            // Ignored
+        } catch (final IOException e) {
+            if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
         return responseCode;
@@ -160,8 +165,8 @@ public class HttpUtility {
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
-        } catch (final IOException ignored) {
-            // Ignored
+        } catch (final IOException e) {
+            if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
         return responseCode;
@@ -185,8 +190,8 @@ public class HttpUtility {
             connection.setRequestProperty("User-Agent", userAgent);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             responseCode = connection.getResponseCode();
-        } catch (final IOException ignored) {
-            // Ignored
+        } catch (final IOException e) {
+            if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
         return responseCode;
