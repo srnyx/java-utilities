@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * Utility class for making HTTP requests
  */
 public class HttpUtility {
-    public static final boolean DEBUG = false;
+    public static boolean DEBUG = false;
 
     /**
      * Sends a GET request to the specified URL and returns the result of the specified function
@@ -130,35 +130,6 @@ public class HttpUtility {
         try {
             connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
             connection.setRequestMethod("PUT");
-            connection.setRequestProperty("User-Agent", userAgent);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-            if (connectionConsumer != null) connectionConsumer.accept(connection);
-            connection.getOutputStream().write(data.toString().getBytes());
-            responseCode = connection.getResponseCode();
-        } catch (final IOException e) {
-            if (DEBUG) e.printStackTrace();
-        }
-        if (connection != null) connection.disconnect();
-        return responseCode;
-    }
-
-    /**
-     * Sends a PATCH request to the specified URL with the specified {@link JsonElement JSON data}
-     *
-     * @param   userAgent           the user agent to use
-     * @param   urlString           the URL to send the PATCH request to
-     * @param   data                the {@link JsonElement JSON data} to send with the PATCH request
-     * @param   connectionConsumer  the consumer to apply to the {@link HttpURLConnection}
-     *
-     * @return                      the response code of the request
-     */
-    public static int patchJson(@NotNull String userAgent, @NotNull String urlString, @NotNull JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
-        int responseCode = -1;
-        HttpURLConnection connection = null;
-        try {
-            connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
-            connection.setRequestMethod("PATCH");
             connection.setRequestProperty("User-Agent", userAgent);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
