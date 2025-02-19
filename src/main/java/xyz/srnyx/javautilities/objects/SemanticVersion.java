@@ -3,11 +3,13 @@ package xyz.srnyx.javautilities.objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import xyz.srnyx.javautilities.parents.Stringable;
+
 
 /**
  * Represents a Semantic version
  */
-public class SemanticVersion implements Comparable<SemanticVersion> {
+public class SemanticVersion extends Stringable implements Comparable<SemanticVersion> {
     /**
      * The version string
      */
