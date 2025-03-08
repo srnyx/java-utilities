@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import xyz.srnyx.javautilities.MiscUtility;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -13,12 +14,12 @@ import java.util.Optional;
  */
 public class Mapper {
     /**
-     * Converts an {@link Object} to the specified {@link Class}
+     * Casts an {@link Object} to the specified {@link Class}
      *
      * @param   object  the {@link Object} to convert
      * @param   clazz   the {@link Class} to convert to
      *
-     * @return          the converted {@link Object} or {@code null}
+     * @return          the converted {@link Object} or {@code Optional#empty()}
      *
      * @param   <T>     the type of the {@link Class}
      */
@@ -32,7 +33,7 @@ public class Mapper {
      *
      * @param   object  the {@link Object} to convert
      *
-     * @return          the {@link Integer} or {@code null}
+     * @return          the {@link Integer} or {@link Optional#empty()}
      */
     @NotNull
     public static Optional<Integer> toInt(@Nullable Object object) {
@@ -44,7 +45,7 @@ public class Mapper {
      *
      * @param   object  the {@link Object} to convert
      *
-     * @return          the {@link Double} or {@code null}
+     * @return          the {@link Double} or {@link Optional#empty()}
      */
     @NotNull
     public static Optional<Double> toDouble(@Nullable Object object) {
@@ -56,11 +57,23 @@ public class Mapper {
      *
      * @param   object  the {@link Object} to convert
      *
-     * @return          the {@link Long} or {@code null}
+     * @return          the {@link Long} or {@link Optional#empty()}
      */
     @NotNull
     public static Optional<Long> toLong(@Nullable Object object) {
         return object == null ? Optional.empty() : MiscUtility.handleException(() -> Long.parseLong(object.toString()));
+    }
+
+    /**
+     * Converts an {@link Object} to a {@link UUID}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link UUID} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<UUID> toUUID(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> UUID.fromString(object.toString()));
     }
 
     private Mapper() {
