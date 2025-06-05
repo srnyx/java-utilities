@@ -95,7 +95,7 @@ public class HttpUtility {
      *
      * @return                      the response code of the request
      */
-    public static int postJson(@NotNull String userAgent, @NotNull String urlString, @NotNull JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
+    public static int postJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
         int responseCode = -1;
         HttpURLConnection connection = null;
         try {
@@ -105,7 +105,7 @@ public class HttpUtility {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
-            connection.getOutputStream().write(data.toString().getBytes());
+            if (data != null) connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
         } catch (final IOException e) {
             if (DEBUG) e.printStackTrace();
@@ -124,7 +124,7 @@ public class HttpUtility {
      *
      * @return                      the response code of the request
      */
-    public static int putJson(@NotNull String userAgent, @NotNull String urlString, @NotNull JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
+    public static int putJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
         int responseCode = -1;
         HttpURLConnection connection = null;
         try {
@@ -134,7 +134,7 @@ public class HttpUtility {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
-            connection.getOutputStream().write(data.toString().getBytes());
+            if (data != null) connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
         } catch (final IOException e) {
             if (DEBUG) e.printStackTrace();
