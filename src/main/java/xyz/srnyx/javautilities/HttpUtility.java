@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -50,7 +49,7 @@ public class HttpUtility {
                 return Optional.empty();
             }
             result = function.apply(new InputStreamReader(connection.getInputStream()));
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
@@ -107,7 +106,7 @@ public class HttpUtility {
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             if (data != null) connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
@@ -136,7 +135,7 @@ public class HttpUtility {
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             if (data != null) connection.getOutputStream().write(data.toString().getBytes());
             responseCode = connection.getResponseCode();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
@@ -161,7 +160,7 @@ public class HttpUtility {
             connection.setRequestProperty("User-Agent", userAgent);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             responseCode = connection.getResponseCode();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
