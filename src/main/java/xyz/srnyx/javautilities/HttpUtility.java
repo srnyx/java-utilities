@@ -92,10 +92,11 @@ public class HttpUtility {
      * @param   data                the {@link JsonObject JSON data} to send with the POST request
      * @param   connectionConsumer  the consumer to apply to the {@link HttpURLConnection}
      *
-     * @return                      the response code of the request
+     * @return                      a {@link Response} object containing the response code and message, or null if the request failed
      */
-    public static int postJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
-        int responseCode = -1;
+    @Nullable
+    public static Response postJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
+        Response response = null;
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
@@ -105,12 +106,12 @@ public class HttpUtility {
             connection.setDoOutput(true);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             if (data != null) connection.getOutputStream().write(data.toString().getBytes());
-            responseCode = connection.getResponseCode();
+            response = new Response(connection.getResponseCode(), connection.getResponseMessage());
         } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
-        return responseCode;
+        return response;
     }
 
     /**
@@ -121,10 +122,11 @@ public class HttpUtility {
      * @param   data                the {@link JsonElement JSON data} to send with the PUT request
      * @param   connectionConsumer  the consumer to apply to the {@link HttpURLConnection}
      *
-     * @return                      the response code of the request
+     * @return                      a {@link Response} object containing the response code and message, or null if the request failed
      */
-    public static int putJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
-        int responseCode = -1;
+    @Nullable
+    public static Response putJson(@NotNull String userAgent, @NotNull String urlString, @Nullable JsonElement data, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
+        Response response = null;
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
@@ -134,12 +136,12 @@ public class HttpUtility {
             connection.setDoOutput(true);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
             if (data != null) connection.getOutputStream().write(data.toString().getBytes());
-            responseCode = connection.getResponseCode();
+            response = new Response(connection.getResponseCode(), connection.getResponseMessage());
         } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
-        return responseCode;
+        return response;
     }
 
     /**
@@ -149,22 +151,23 @@ public class HttpUtility {
      * @param   urlString           the URL to send the DELETE request to
      * @param   connectionConsumer  the consumer to apply to the {@link HttpURLConnection}
      *
-     * @return                      the response code of the request
+     * @return                      a {@link Response} object containing the response code and message, or null if the request failed
      */
-    public static int delete(@NotNull String userAgent, @NotNull String urlString, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
-        int responseCode = -1;
+    @Nullable
+    public static Response delete(@NotNull String userAgent, @NotNull String urlString, @Nullable Consumer<HttpURLConnection> connectionConsumer) {
+        Response response = null;
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) URI.create(urlString).toURL().openConnection();
             connection.setRequestMethod("DELETE");
             connection.setRequestProperty("User-Agent", userAgent);
             if (connectionConsumer != null) connectionConsumer.accept(connection);
-            responseCode = connection.getResponseCode();
+            response = new Response(connection.getResponseCode(), connection.getResponseMessage());
         } catch (final Exception e) {
             if (DEBUG) e.printStackTrace();
         }
         if (connection != null) connection.disconnect();
-        return responseCode;
+        return response;
     }
 
     /**
@@ -174,5 +177,30 @@ public class HttpUtility {
      */
     private HttpUtility() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    /**
+     * Represents the response from an HTTP request
+     */
+    public static class Response {
+        /**
+         * The HTTP response code
+         */
+        public final int code;
+        /**
+         * The HTTP response message
+         */
+        @Nullable public final String message;
+
+        /**
+         * Constructs a new {@link Response} instance
+         *
+         * @param   code    {@link #code}
+         * @param   message {@link #message}
+         */
+        public Response(int code, @Nullable String message) {
+            this.code = code;
+            this.message = message;
+        }
     }
 }
