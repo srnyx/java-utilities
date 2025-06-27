@@ -25,7 +25,7 @@ public class Mapper {
      */
     @NotNull
     public static <T> Optional<T> to(@Nullable Object object, @NotNull Class<T> clazz) {
-        return !clazz.isInstance(object) ? Optional.empty() : MiscUtility.handleException(() -> clazz.cast(object));
+        return !clazz.isInstance(object) ? Optional.empty() : MiscUtility.handleException(() -> clazz.cast(object), ClassCastException.class);
     }
 
     /**
@@ -37,7 +37,7 @@ public class Mapper {
      */
     @NotNull
     public static Optional<Integer> toInt(@Nullable Object object) {
-        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Integer.parseInt(object.toString()));
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Integer.parseInt(object.toString()), NumberFormatException.class);
     }
 
     /**
@@ -49,7 +49,7 @@ public class Mapper {
      */
     @NotNull
     public static Optional<Double> toDouble(@Nullable Object object) {
-        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Double.parseDouble(object.toString()));
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Double.parseDouble(object.toString()), NumberFormatException.class);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Mapper {
      */
     @NotNull
     public static Optional<Long> toLong(@Nullable Object object) {
-        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Long.parseLong(object.toString()));
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Long.parseLong(object.toString()), NumberFormatException.class);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Mapper {
      */
     @NotNull
     public static Optional<UUID> toUUID(@Nullable Object object) {
-        return object == null ? Optional.empty() : MiscUtility.handleException(() -> UUID.fromString(object.toString()));
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> UUID.fromString(object.toString()), IllegalArgumentException.class);
     }
 
     private Mapper() {
