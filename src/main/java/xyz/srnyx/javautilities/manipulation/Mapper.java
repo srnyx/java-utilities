@@ -76,6 +76,21 @@ public class Mapper {
         return object == null ? Optional.empty() : MiscUtility.handleException(() -> UUID.fromString(object.toString()), IllegalArgumentException.class);
     }
 
+    /**
+     * Converts a {@link String} to an {@link Enum} value of the specified class
+     *
+     * @param   name        the name of the {@link Enum} value to convert
+     * @param   enumClass   the {@link Class} of the {@link Enum} to convert to
+     *
+     * @return              an {@link Optional} containing the {@link Enum} value if it exists, otherwise {@link Optional#empty()}
+     *
+     * @param   <T>         the type of the {@link Enum}
+     */
+    @NotNull
+    public static <T extends Enum<T>> Optional<T> toEnum(@Nullable String name, @NotNull Class<T> enumClass) {
+        return name == null || name.isEmpty() ? Optional.empty() : MiscUtility.handleException(() -> Enum.valueOf(enumClass, name.toUpperCase()), IllegalArgumentException.class);
+    }
+
     private Mapper() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
