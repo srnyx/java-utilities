@@ -4,11 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -53,6 +52,29 @@ public class FileUtility {
                 .filter(name -> name.endsWith(fullExtension))
                 .map(name -> name.substring(0, name.length() - extensionLength))
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the content of a resource file as a {@link List} of {@link String}s
+     *
+     * @param   fileName    the name of the resource file
+     *
+     * @return              the content of the resource file
+     */
+    @NotNull
+    public static List<String> getResourceContent(@NotNull String fileName) {
+        try (final InputStream inputStream = FileUtility.class.getResourceAsStream(fileName)) {
+            if (inputStream == null) throw new NullPointerException("Failed to get resource: " + fileName);
+            final List<String> content = new ArrayList<>();
+            try (final Scanner scanner = new Scanner(inputStream)) {
+                while (scanner.hasNextLine()) content.add(scanner.nextLine());
+            } catch (final NullPointerException e) {
+                e.printStackTrace();
+            }
+            return content;
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to read resource: " + fileName, e);
+        }
     }
 
     /**
