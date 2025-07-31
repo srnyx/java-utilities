@@ -3,12 +3,16 @@ package xyz.srnyx.javautilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -74,6 +78,70 @@ public class FileUtility {
             return content;
         } catch (final IOException e) {
             throw new RuntimeException("Failed to read resource: " + fileName, e);
+        }
+    }
+
+    /**
+     * Copies a resource folder to a target directory
+     *
+     * @param   resourcePath            the path to the resource folder (starting with {@code /})
+     * @param   destinationDirectory    the target directory to copy the resource folder to
+     *
+     * @throws  IOException             if an I/O error occurs
+     */
+    public static void copyResourceFolder(@NotNull String resourcePath, @NotNull Path destinationDirectory) throws IOException {
+        // Get resource
+        final URL resource = FileUtility.class.getResource(resourcePath);
+        if (resource == null) throw new FileNotFoundException("Resource not found: " + resourcePath);
+        final URI uri;
+        try {
+            uri = resource.toURI();
+        } catch (final URISyntaxException e) {
+            throw new IOException("Invalid URI for resource: " + resourcePath, e);
+        }
+
+        // Create target directory if it doesn't exist
+        if (!Files.exists(destinationDirectory)) Files.createDirectories(destinationDirectory);
+
+        // Check if resource is a JAR file
+        if (uri.getScheme().equals("jar")) {
+            try (final FileSystem fileSystem = FileSystems.newFileSystem(uri, new HashMap<>())) {
+                walkAndCopy(fileSystem.getPath(resourcePath), destinationDirectory);
+            }
+            return;
+        }
+
+        // Not a JAR file, treat as directory
+        walkAndCopy(Paths.get(uri), destinationDirectory);
+    }
+
+    /**
+     * Walks a source directory and copies all files and directories to a destination directory
+     *
+     * @param   source      the source directory
+     * @param   destination the destination directory
+     *
+     * @throws  IOException if an I/O error occurs
+     */
+    public static void walkAndCopy(@NotNull Path source, @NotNull Path destination) throws IOException {
+        try (final Stream<Path> files = Files.walk(source)) {
+            files.forEach(path -> {
+                try {
+                    final Path fileDestination = destination.resolve(source.relativize(path).toString());
+
+                    // Directory
+                    if (Files.isDirectory(path)) {
+                        Files.createDirectories(fileDestination);
+                        return;
+                    }
+
+                    // File
+                    Files.createDirectories(fileDestination.getParent());
+                    Files.copy(path, fileDestination, StandardCopyOption.REPLACE_EXISTING);
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
