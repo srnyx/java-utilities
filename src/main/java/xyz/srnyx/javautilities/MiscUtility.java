@@ -4,7 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -13,6 +16,23 @@ import java.util.stream.Collectors;
  * General utility methods
  */
 public class MiscUtility {
+    /**
+     * A {@link Random} instance
+     */
+    @NotNull public static final Random RANDOM = new Random();
+    /**
+     * The number of available CPU processors
+     */
+    public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
+    /**
+     * A {@link ScheduledExecutorService} for CPU intensive tasks (heavy computation, such as mathematical calculations or data processing)
+     */
+    @NotNull public static final ScheduledExecutorService CPU_SCHEDULER = Executors.newScheduledThreadPool(AVAILABLE_PROCESSORS);
+    /**
+     * A {@link ScheduledExecutorService} for IO intensive tasks (waiting for external resources, such as reading/writing files, making network requests, or querying a database)
+     */
+    @NotNull public static final ScheduledExecutorService IO_SCHEDULER = Executors.newScheduledThreadPool(AVAILABLE_PROCESSORS * 2);
+
     /**
      * If specific throwables are thrown by the {@link Supplier}, {@code null} is returned
      *
