@@ -16,6 +16,9 @@ import java.util.Base64;
 import java.util.Optional;
 
 
+/**
+ * Utility class for encrypting and decrypting values using HMAC signatures
+ */
 public class Encryptor {
     /**
      * The algorithm used for signing
@@ -34,9 +37,12 @@ public class Encryptor {
     /**
      * Creates a new {@link Encryptor}
      *
-     * @param   algorithm   {@link #algorithm}
-     * @param   secret      {@link #secret}
-     * @param   maxAge      {@link #maxAge}
+     * @param   algorithm                   {@link #algorithm}
+     * @param   secret                      {@link #secret}
+     * @param   maxAge                      {@link #maxAge}
+     *
+     * @throws  NoSuchAlgorithmException    if the specified algorithm is not available
+     * @throws  InvalidKeyException         if the provided secret is invalid
      */
     public Encryptor(@NotNull String algorithm, @NotNull byte[] secret, @Nullable Duration maxAge) throws NoSuchAlgorithmException, InvalidKeyException {
         this.algorithm = algorithm;
@@ -68,6 +74,14 @@ public class Encryptor {
         }
     }
 
+    /**
+     * Encrypts a value by creating a signed token that includes the value and a timestamp
+     * <br>The token format is {@code base64(value:timestamp:signature)}
+     *
+     * @param   value   the value to encrypt, will be converted to string using {@link Object#toString()}
+     *
+     * @return          the encrypted token, or {@code null} if an error occurred during signature generation
+     */
     @Nullable
     public String encrypt(@NotNull Object value) {
         final String payload = value + ":" + System.currentTimeMillis();
@@ -77,6 +91,13 @@ public class Encryptor {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(token.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Decrypts a token by verifying its signature and timestamp
+     *
+     * @param   token   the token to decrypt
+     *
+     * @return          the original value if the token is valid and not expired, otherwise {@code null}
+     */
     @Nullable
     public String decrypt(@NotNull String token) {
         // Decode token
