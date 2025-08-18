@@ -1,9 +1,12 @@
-package xyz.srnyx.javautilities.objects;
+package xyz.srnyx.javautilities.objects.encryptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.javautilities.manipulation.Mapper;
+import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenExpiredException;
+import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenInvalidException;
+import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenTamperedException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -94,32 +97,36 @@ public class Encryptor {
     /**
      * Decrypts a token by verifying its signature and timestamp
      *
-     * @param   token   the token to decrypt
+     * @param   token                   the token to decrypt
      *
-     * @return          the original value if the token is valid and not expired, otherwise {@code null}
+     * @return                          the original value if the token is valid and not expired, otherwise {@code null}
+     *
+     * @throws  TokenInvalidException   if the token is invalid
+     * @throws  TokenExpiredException   if the token has expired
+     * @throws  TokenTamperedException  if the token has been tampered with
      */
     @Nullable
-    public String decrypt(@NotNull String token) {
+    public String decrypt(@NotNull String token) throws TokenInvalidException, TokenExpiredException, TokenTamperedException {
         // Decode token
         final String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
         final String[] parts = decoded.split(":");
-        if (parts.length != 3) return null;
+        if (parts.length != 3) throw new TokenInvalidException("Token does not have 3 parts");
 
         // Get casted value and timestamp
         final String value = parts[0];
-        if (value == null) return null;
+        if (value == null) throw new TokenInvalidException("Value is null");
         final Optional<Long> timestamp = Mapper.toLong(parts[1]);
-        if (!timestamp.isPresent()) return null;
+        if (!timestamp.isPresent()) throw new TokenInvalidException("Timestamp is not a valid long");
 
         // Check age
-        if (maxAge != null && System.currentTimeMillis() - timestamp.get() > maxAge.toMillis()) return null; // Expired
+        if (maxAge != null && System.currentTimeMillis() - timestamp.get() > maxAge.toMillis()) throw new TokenExpiredException();
 
         // Recompute signature
         final String payload = parts[0] + ":" + parts[1];
         final byte[] expectedSig = getSignature(payload);
         if (expectedSig == null) return null; // Should never happen
         final byte[] actualSig = Base64.getUrlDecoder().decode(parts[2]);
-        if (!Arrays.equals(expectedSig, actualSig)) return null; // Tampered
+        if (!Arrays.equals(expectedSig, actualSig)) throw new TokenTamperedException();
 
         return value;
     }
