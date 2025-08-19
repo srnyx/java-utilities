@@ -73,7 +73,22 @@ public class Mapper {
      */
     @NotNull
     public static Optional<UUID> toUUID(@Nullable Object object) {
-        return object == null ? Optional.empty() : MiscUtility.handleException(() -> UUID.fromString(object.toString()), IllegalArgumentException.class);
+        if (object == null) return Optional.empty();
+        String string = object.toString();
+
+        // Insert missing dashes if necessary
+        if (!string.contains("-")) {
+            if (string.length() != 32) return Optional.empty(); // Invalid UUID length
+            try {
+                string = string.substring(0, 8) + "-" + string.substring(8, 12) + "-" + string.substring(12, 16) + "-" + string.substring(16, 20) + "-" + string.substring(20);
+            } catch (final IndexOutOfBoundsException e) {
+                return Optional.empty(); // Invalid dash-less UUID format
+            }
+        }
+
+        // Parse UUID
+        final String finalString = string;
+        return MiscUtility.handleException(() -> UUID.fromString(finalString), IllegalArgumentException.class);
     }
 
     /**
