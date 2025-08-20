@@ -1,22 +1,28 @@
 package xyz.srnyx.javautilities.objects.encryptor;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.javautilities.manipulation.Mapper;
 import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenExpiredException;
 import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenInvalidException;
-import xyz.srnyx.javautilities.objects.encryptor.exceptions.TokenTamperedException;
 
-import javax.crypto.Mac;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Optional;
 
 
 /**
@@ -24,9 +30,30 @@ import java.util.Optional;
  */
 public class Encryptor {
     /**
-     * The algorithm used for signing
+     * The algorithm used for encryption
+     * <br>AES (Advanced Encryption Standard) is a symmetric encryption algorithm widely used across the globe
+     * <br>It is known for its speed and security, making it suitable for encrypting sensitive data
      */
-    @NotNull private final String algorithm;
+    @NotNull private static final String ALGORITHM = "AES";
+    /**
+     * The transformation string for AES in GCM mode with NoPadding
+     * <br>GCM (Galois/Counter Mode) is a mode of operation for symmetric key cryptographic block ciphers
+     * <br>It provides both confidentiality and data integrity
+     */
+    @NotNull private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    /**
+     * The size of the initialization vector (IV) in bits
+     * <br>GCM typically uses a 96-bit IV, which is recommended for security
+     * <br>Using a unique IV for each encryption operation is crucial to prevent replay attacks
+     */
+    private static final int IV_SIZE = 12; // 96 bits for GCM
+    /**
+     * The size of the authentication tag in bits
+     * <br>GCM uses a 128-bit tag for authentication, which is standard and provides a good balance between security and performance
+     * <br>The tag is used to verify the integrity of the encrypted data
+     */
+    private static final int TAG_SIZE = 128;
+
     /**
      * The secret key used for signing
      */
@@ -40,94 +67,123 @@ public class Encryptor {
     /**
      * Creates a new {@link Encryptor}
      *
-     * @param   algorithm                   {@link #algorithm}
      * @param   secret                      {@link #secret}
      * @param   maxAge                      {@link #maxAge}
      *
      * @throws  NoSuchAlgorithmException    if the specified algorithm is not available
      * @throws  InvalidKeyException         if the provided secret is invalid
+     * @throws  NoSuchPaddingException      if the specified padding scheme is not available
      */
-    public Encryptor(@NotNull String algorithm, @NotNull byte[] secret, @Nullable Duration maxAge) throws NoSuchAlgorithmException, InvalidKeyException {
-        this.algorithm = algorithm;
-        this.secret = new SecretKeySpec(secret, algorithm);
+    public Encryptor(@NotNull byte[] secret, @Nullable Duration maxAge) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+        this.secret = new SecretKeySpec(secret, ALGORITHM);
         this.maxAge = maxAge;
 
-        // Test Mac instance for validity
-        final Mac mac = Mac.getInstance(algorithm);
-        mac.init(this.secret);
+        // Validate
+        if (maxAge != null && maxAge.isNegative()) throw new IllegalArgumentException("maxAge cannot be negative");
+        Cipher.getInstance(TRANSFORMATION).init(Cipher.ENCRYPT_MODE, this.secret, new GCMParameterSpec(TAG_SIZE, new byte[IV_SIZE]));
     }
 
     /**
-     * Generates a signature for the given payload
+     * Generates the cipher text for encryption or decryption
      *
-     * @param   payload the payload to sign
+     * @param   mode    the mode of operation ({@link Cipher#ENCRYPT_MODE} or {@link Cipher#DECRYPT_MODE})
+     * @param   iv      the initialization vector (IV) used for GCM mode
+     * @param   token   the token to encrypt or decrypt
      *
-     * @return          the signature, or {@code null} if an error occurred
+     * @return          the resulting cipher text as a byte array, or null if an error occurs
      */
     @Nullable
-    private byte[] getSignature(@NotNull String payload) {
+    private byte[] getCipherText(int mode, byte[] iv, byte[] token) {
         try {
-            final Mac mac = Mac.getInstance(algorithm);
-            mac.init(secret);
-            return mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            final GCMParameterSpec spec = new GCMParameterSpec(TAG_SIZE, iv);
+            cipher.init(mode, secret, spec);
+            return cipher.doFinal(token);
         } catch (final Exception e) {
-            // This should never happen since we test the Mac instance in the constructor
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Encrypts a value by creating a signed token that includes the value and a timestamp
-     * <br>The token format is {@code base64(value:timestamp:signature)}
+     * Encrypts a {@link JsonElement} value and returns a Base64 URL-safe string without padding
      *
-     * @param   value   the value to encrypt, will be converted to string using {@link Object#toString()}
+     * @param   value   the {@link JsonElement} value to encrypt
      *
-     * @return          the encrypted token, or {@code null} if an error occurred during signature generation
+     * @return          the encrypted token as a Base64 URL-safe string without padding, or null if encryption fails
      */
     @Nullable
-    public String encrypt(@NotNull Object value) {
-        final String payload = value + ":" + System.currentTimeMillis();
-        final byte[] signature = getSignature(payload);
-        if (signature == null) return null; // Should never happen
-        final String token = payload + ":" + Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(token.getBytes(StandardCharsets.UTF_8));
+    public String encrypt(@NotNull JsonElement value) {
+        // Validate value
+        if (value.isJsonNull()) return null;
+
+        // Generate random IV
+        final byte[] iv = new byte[IV_SIZE];
+        new SecureRandom().nextBytes(iv);
+
+        // Create payload with timestamp and value
+        final JsonObject payload = new JsonObject();
+        payload.addProperty("timestamp", String.valueOf(System.currentTimeMillis())); // Store as string to prevent rounding
+        payload.add("value", value);
+
+        // Encrypt payload
+        final byte[] ciphertext = getCipherText(Cipher.ENCRYPT_MODE, iv, payload.toString().getBytes(StandardCharsets.UTF_8));
+        if (ciphertext == null) return null;
+
+        // Combine IV and ciphertext
+        final ByteBuffer buffer = ByteBuffer.allocate(IV_SIZE + ciphertext.length);
+        buffer.put(iv);
+        buffer.put(ciphertext);
+
+        // Encode to Base64 URL-safe string without padding
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(buffer.array());
     }
 
     /**
-     * Decrypts a token by verifying its signature and timestamp
+     * Decrypts a Base64 URL-safe string token and returns the original {@link JsonElement} value
      *
-     * @param   token                   the token to decrypt
+     * @param   token   the Base64 URL-safe string token to decrypt
      *
-     * @return                          the original value if the token is valid and not expired, otherwise {@code null}
-     *
-     * @throws  TokenInvalidException   if the token is invalid
-     * @throws  TokenExpiredException   if the token has expired
-     * @throws  TokenTamperedException  if the token has been tampered with
+     * @return          the decrypted {@link JsonElement} value, or null if decryption fails or token is invalid
      */
     @Nullable
-    public String decrypt(@NotNull String token) throws TokenInvalidException, TokenExpiredException, TokenTamperedException {
-        // Decode token
-        final String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        final String[] parts = decoded.split(":");
-        if (parts.length != 3) throw new TokenInvalidException("Token does not have 3 parts");
+    public JsonElement decrypt(@NotNull String token) throws TokenExpiredException, TokenInvalidException {
+        // Validate token format
+        if (token.isEmpty()) throw new TokenInvalidException("Token is empty or invalid");
 
-        // Get casted value and timestamp
-        final String value = parts[0];
-        if (value == null) throw new TokenInvalidException("Value is null");
-        final Optional<Long> timestamp = Mapper.toLong(parts[1]);
-        if (!timestamp.isPresent()) throw new TokenInvalidException("Timestamp is not a valid long");
+        // Decode Base64 URL-safe string
+        final byte[] decoded = Base64.getUrlDecoder().decode(token);
+        final ByteBuffer buffer = ByteBuffer.wrap(decoded);
 
-        // Check age
-        if (maxAge != null && System.currentTimeMillis() - timestamp.get() > maxAge.toMillis()) throw new TokenExpiredException();
+        // Get IV from beginning of buffer
+        final byte[] iv = new byte[IV_SIZE];
+        buffer.get(iv);
+        if (buffer.remaining() < 1) throw new TokenInvalidException("Token is invalid or tampered with, no cipherText found");
 
-        // Recompute signature
-        final String payload = parts[0] + ":" + parts[1];
-        final byte[] expectedSig = getSignature(payload);
-        if (expectedSig == null) return null; // Should never happen
-        final byte[] actualSig = Base64.getUrlDecoder().decode(parts[2]);
-        if (!Arrays.equals(expectedSig, actualSig)) throw new TokenTamperedException();
+        // Extract cipherText
+        final byte[] cipherText = new byte[buffer.remaining()];
+        buffer.get(cipherText);
 
-        return value;
+        // Decrypt cipherText
+        final byte[] decrypted = getCipherText(Cipher.DECRYPT_MODE, iv, cipherText);
+        if (decrypted == null) throw new TokenInvalidException("Decryption failed, token is invalid or tampered with");
+        final String decryptedString = new String(decrypted, StandardCharsets.UTF_8);
+
+        // Parse JSON
+        final JsonObject jsonObject = Mapper.toJson(decryptedString)
+                .flatMap(element -> Mapper.convertJsonElement(element, JsonObject.class))
+                .orElseThrow(() -> new TokenInvalidException("Decrypted token is not a valid JSON object"));
+        if (!jsonObject.has("timestamp") || !jsonObject.has("value")) throw new TokenInvalidException("Decrypted token is missing required fields");
+
+        // Check timestamp expiration
+        final String timestamp = Mapper.convertJsonElement(jsonObject.get("timestamp"), JsonPrimitive.class)
+                .flatMap(primitive -> Mapper.convertJsonPrimitive(primitive, String.class))
+                .orElseThrow(() -> new TokenInvalidException("Timestamp is not a valid string"));
+        final Long timestampValue = Mapper.toLong(timestamp).orElseThrow(() -> new TokenInvalidException("Timestamp is not a valid long value"));
+        if (maxAge != null && System.currentTimeMillis() - timestampValue > maxAge.toMillis()) throw new TokenExpiredException();
+
+        // Return value
+        final JsonElement value = jsonObject.get("value");
+        return value.isJsonNull() ? null : value;
     }
 }
