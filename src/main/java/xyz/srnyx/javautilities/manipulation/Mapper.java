@@ -1,10 +1,17 @@
 package xyz.srnyx.javautilities.manipulation;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.javautilities.MiscUtility;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,6 +20,8 @@ import java.util.UUID;
  * A utility class for converting {@link Object Objects} to other types
  */
 public class Mapper {
+    @NotNull private static final JsonParser JSON_PARSER = new JsonParser();
+
     /**
      * Casts an {@link Object} to the specified {@link Class}
      *
@@ -104,6 +113,54 @@ public class Mapper {
     @NotNull
     public static <T extends Enum<T>> Optional<T> toEnum(@Nullable String name, @NotNull Class<T> enumClass) {
         return name == null || name.isEmpty() ? Optional.empty() : MiscUtility.handleException(() -> Enum.valueOf(enumClass, name.toUpperCase()), IllegalArgumentException.class);
+    }
+
+    @NotNull
+    public static Optional<JsonElement> toJson(@Nullable Object object) {
+        if (object == null) return Optional.of(JsonNull.INSTANCE);
+        if (object instanceof JsonElement) return Optional.of((JsonElement) object);
+        return MiscUtility.handleException(() -> JSON_PARSER.parse(object.toString()), IllegalStateException.class);
+    }
+
+    @NotNull
+    public static <T extends JsonElement> Optional<T> convertJsonElement(@Nullable JsonElement element, @NotNull Class<T> jsonClass) {
+        return !jsonClass.isInstance(element) ? Optional.empty() : Optional.of(jsonClass.cast(element));
+    }
+
+    @NotNull
+    public static <T> Optional<T> convertJsonPrimitive(@Nullable JsonPrimitive primitive, @NotNull Class<T> primitiveClass) {
+        // Check if primitive is null or class not supported
+        if (primitive == null || (
+                primitiveClass != Boolean.class &&
+                primitiveClass != Number.class &&
+                primitiveClass != String.class &&
+                primitiveClass != Double.class &&
+                primitiveClass != BigDecimal.class &&
+                primitiveClass != BigInteger.class &&
+                primitiveClass != Float.class &&
+                primitiveClass != Long.class &&
+                primitiveClass != Short.class &&
+                primitiveClass != Integer.class &&
+                primitiveClass != Byte.class &&
+                primitiveClass != Character.class)) {
+            return Optional.empty();
+        }
+
+        // Handle conversion based on the primitive class type
+        return MiscUtility.handleException(() -> {
+            if (primitiveClass == Boolean.class) return primitive.getAsBoolean();
+            if (primitiveClass == Number.class) return primitive.getAsNumber();
+            if (primitiveClass == String.class) return primitive.getAsString();
+            if (primitiveClass == Double.class) return primitive.getAsDouble();
+            if (primitiveClass == BigDecimal.class) return primitive.getAsBigDecimal();
+            if (primitiveClass == BigInteger.class) return primitive.getAsBigInteger();
+            if (primitiveClass == Float.class) return primitive.getAsFloat();
+            if (primitiveClass == Long.class) return primitive.getAsLong();
+            if (primitiveClass == Short.class) return primitive.getAsShort();
+            if (primitiveClass == Integer.class) return primitive.getAsInt();
+            if (primitiveClass == Byte.class) return primitive.getAsByte();
+            return primitive.getAsCharacter();
+        }, IllegalStateException.class).map(primitiveClass::cast);
     }
 
     private Mapper() {
