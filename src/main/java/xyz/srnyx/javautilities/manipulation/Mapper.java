@@ -2,7 +2,6 @@ package xyz.srnyx.javautilities.manipulation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +19,6 @@ import java.util.UUID;
  * A utility class for converting {@link Object Objects} to other types
  */
 public class Mapper {
-    @NotNull private static final JsonParser JSON_PARSER = new JsonParser();
-
     /**
      * Casts an {@link Object} to the specified {@link Class}
      *
@@ -119,7 +116,7 @@ public class Mapper {
     public static Optional<JsonElement> toJson(@Nullable Object object) {
         if (object == null) return Optional.of(JsonNull.INSTANCE);
         if (object instanceof JsonElement) return Optional.of((JsonElement) object);
-        return MiscUtility.handleException(() -> JSON_PARSER.parse(object.toString()), IllegalStateException.class);
+        return MiscUtility.handleException(() -> MiscUtility.JSON_PARSER.parse(object.toString()), IllegalStateException.class);
     }
 
     @NotNull

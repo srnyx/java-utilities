@@ -1,5 +1,7 @@
 package xyz.srnyx.javautilities;
 
+import com.google.gson.JsonParser;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -20,6 +22,10 @@ public class MiscUtility {
      * A {@link Random} instance
      */
     @NotNull public static final Random RANDOM = new Random();
+    /**
+     * A {@link JsonParser} instance
+     */
+    @NotNull public static final JsonParser JSON_PARSER = new JsonParser();
     /**
      * The number of available CPU processors
      */
