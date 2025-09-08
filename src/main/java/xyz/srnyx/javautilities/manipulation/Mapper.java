@@ -71,6 +71,66 @@ public class Mapper {
     }
 
     /**
+     * Converts an {@link Object} to a {@link Float}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link Float} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<Float> toFloat(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Float.parseFloat(object.toString()), NumberFormatException.class);
+    }
+
+    /**
+     * Converts an {@link Object} to a {@link Short}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link Short} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<Short> toShort(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Short.parseShort(object.toString()), NumberFormatException.class);
+    }
+
+    /**
+     * Converts an {@link Object} to a {@link Byte}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link Byte} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<Byte> toByte(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Byte.parseByte(object.toString()), NumberFormatException.class);
+    }
+
+    /**
+     * Converts an {@link Object} to a {@link BigInteger}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link BigInteger} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<BigInteger> toBigInteger(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> new BigInteger(object.toString()), NumberFormatException.class);
+    }
+
+    /**
+     * Converts an {@link Object} to a {@link BigDecimal}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link BigDecimal} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<BigDecimal> toBigDecimal(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> new BigDecimal(object.toString()), NumberFormatException.class);
+    }
+
+    /**
      * Converts an {@link Object} to a {@link UUID}
      *
      * @param   object  the {@link Object} to convert
