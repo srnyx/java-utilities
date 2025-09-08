@@ -112,6 +112,13 @@ public class Mapper {
         return name == null || name.isEmpty() ? Optional.empty() : MiscUtility.handleException(() -> Enum.valueOf(enumClass, name.toUpperCase()), IllegalArgumentException.class);
     }
 
+    /**
+     * Converts an {@link Object} to a {@link JsonElement}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the converted {@link JsonElement} or {@link Optional#empty()} if parsing failed
+     */
     @NotNull
     public static Optional<JsonElement> toJson(@Nullable Object object) {
         if (object == null) return Optional.of(JsonNull.INSTANCE);
@@ -119,11 +126,31 @@ public class Mapper {
         return MiscUtility.handleException(() -> MiscUtility.JSON_PARSER.parse(object.toString()), IllegalStateException.class);
     }
 
+    /**
+     * Converts a {@link JsonElement} to the specified subclass
+     *
+     * @param   element     the {@link JsonElement} to convert
+     * @param   jsonClass   the subclass of {@link JsonElement} to convert to
+     *
+     * @return              an {@link Optional} containing the converted {@link JsonElement} if it is of the specified subclass, otherwise {@link Optional#empty()}
+     *
+     * @param   <T>         the type of the {@link JsonElement} subclass
+     */
     @NotNull
     public static <T extends JsonElement> Optional<T> convertJsonElement(@Nullable JsonElement element, @NotNull Class<T> jsonClass) {
         return !jsonClass.isInstance(element) ? Optional.empty() : Optional.of(jsonClass.cast(element));
     }
 
+    /**
+     * Converts a {@link JsonPrimitive} to the specified primitive wrapper class
+     *
+     * @param   primitive       the {@link JsonPrimitive} to convert
+     * @param   primitiveClass  the primitive wrapper {@link Class} to convert to
+     *
+     * @return                  an {@link Optional} containing the converted value if successful, otherwise {@link Optional#empty()}
+     *
+     * @param   <T>             the type of the primitive wrapper class
+     */
     @NotNull
     public static <T> Optional<T> convertJsonPrimitive(@Nullable JsonPrimitive primitive, @NotNull Class<T> primitiveClass) {
         // Check if primitive is null or class not supported
@@ -160,6 +187,9 @@ public class Mapper {
         }, IllegalStateException.class).map(primitiveClass::cast);
     }
 
+    /**
+     * Private constructor to prevent instantiation
+     */
     private Mapper() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }

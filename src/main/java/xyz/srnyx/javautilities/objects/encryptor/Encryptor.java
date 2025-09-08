@@ -67,12 +67,13 @@ public class Encryptor {
     /**
      * Creates a new {@link Encryptor}
      *
-     * @param   secret                      {@link #secret}
-     * @param   maxAge                      {@link #maxAge}
+     * @param   secret                              {@link #secret}
+     * @param   maxAge                              {@link #maxAge}
      *
-     * @throws  NoSuchAlgorithmException    if the specified algorithm is not available
-     * @throws  InvalidKeyException         if the provided secret is invalid
-     * @throws  NoSuchPaddingException      if the specified padding scheme is not available
+     * @throws  NoSuchAlgorithmException            if the specified algorithm is not available
+     * @throws  InvalidKeyException                 if the provided secret is invalid
+     * @throws  NoSuchPaddingException              if the specified padding scheme is not available
+     * @throws  InvalidAlgorithmParameterException  if the provided algorithm parameters are invalid
      */
     public Encryptor(@NotNull byte[] secret, @Nullable Duration maxAge) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException {
         this.secret = new SecretKeySpec(secret, ALGORITHM);
@@ -142,9 +143,12 @@ public class Encryptor {
     /**
      * Decrypts a Base64 URL-safe string token and returns the original {@link JsonElement} value
      *
-     * @param   token   the Base64 URL-safe string token to decrypt
+     * @param   token                   the Base64 URL-safe string token to decrypt
      *
-     * @return          the decrypted {@link JsonElement} value, or null if decryption fails or token is invalid
+     * @return                          the decrypted {@link JsonElement} value, or null if decryption fails or token is invalid
+     *
+     * @throws  TokenExpiredException   if the token has expired based on {@link #maxAge}
+     * @throws  TokenInvalidException   if the token is invalid or tampered with
      */
     @Nullable
     public JsonElement decrypt(@NotNull String token) throws TokenExpiredException, TokenInvalidException {
