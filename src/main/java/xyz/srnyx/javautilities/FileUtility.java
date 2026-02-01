@@ -6,11 +6,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -143,6 +146,50 @@ public class FileUtility {
                 }
             });
         }
+    }
+
+    /**
+     * Gets a {@link List} of all the file names in a specific resource folder
+     *
+     * @param   resourcePath    the path to the resource folder (starting without {@code /})
+     *
+     * @return                  the {@link List} of all the file names in the resource folder
+     */
+    @NotNull
+    public static List<String> getResourceFiles(@NotNull String resourcePath) {
+        if (!resourcePath.endsWith("/")) resourcePath += "/";
+        final List<String> files = new ArrayList<>();
+
+        try {
+            final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(resourcePath);
+            while (resources.hasMoreElements()) {
+                final URL url = resources.nextElement();
+                final String protocol = url.getProtocol();
+
+                // Handle file protocol
+                if (protocol.equals("file")) {
+                    try (final Stream<Path> stream = Files.list(Paths.get(url.toURI()))) {
+                        stream.filter(Files::isRegularFile).forEach(p -> files.add(p.getFileName().toString()));
+                    }
+                    continue;
+                }
+
+                // Handle jar protocol
+                if (protocol.equals("jar")) try (final JarFile jar = ((JarURLConnection) url.openConnection()).getJarFile()) {
+                    final Enumeration<JarEntry> entries = jar.entries();
+                    final int resourcePathLength = resourcePath.length();
+                    while (entries.hasMoreElements()) {
+                        final JarEntry entry = entries.nextElement();
+                        final String name = entry.getName();
+                        if (!entry.isDirectory() && name.startsWith(resourcePath)) files.add(name.substring(resourcePathLength));
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
+        return files;
     }
 
     /**
