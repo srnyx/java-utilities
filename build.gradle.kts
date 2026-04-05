@@ -19,7 +19,7 @@ setupJava(JavaSetupConfig(
 
 repositories.mavenCentral()
 dependencies {
-    compileOnly("org.jetbrains", "annotations", "26.0.2")
+    compileOnly("org.jetbrains", "annotations", "26.1.0")
     compileOnly("com.google.code.gson", "gson", "2.3.1") // Use this specific version for Spigot
 }
 
