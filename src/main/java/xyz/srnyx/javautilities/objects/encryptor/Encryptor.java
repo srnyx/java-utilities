@@ -15,6 +15,7 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -145,7 +146,7 @@ public class Encryptor {
      *
      * @param   token                   the Base64 URL-safe string token to decrypt
      *
-     * @return                          the decrypted {@link JsonElement} value, or null if decryption fails or token is invalid
+     * @return                          the decrypted {@link JsonElement} value, or null if the token is valid but the value is null
      *
      * @throws  TokenExpiredException   if the token has expired based on {@link #maxAge}
      * @throws  TokenInvalidException   if the token is invalid or tampered with
@@ -156,12 +157,21 @@ public class Encryptor {
         if (token.isEmpty()) throw new TokenInvalidException("Token is empty or invalid");
 
         // Decode Base64 URL-safe string
-        final byte[] decoded = Base64.getUrlDecoder().decode(token);
+        final byte[] decoded;
+        try {
+            decoded = Base64.getUrlDecoder().decode(token);
+        } catch (final IllegalArgumentException e) {
+            throw new TokenInvalidException("Token is not valid Base64 URL-safe encoded");
+        }
         final ByteBuffer buffer = ByteBuffer.wrap(decoded);
 
         // Get IV from beginning of buffer
         final byte[] iv = new byte[IV_SIZE];
-        buffer.get(iv);
+        try {
+            buffer.get(iv);
+        } catch (final BufferUnderflowException e) {
+            throw new TokenInvalidException("Token is invalid or tampered with, IV is missing or incomplete");
+        }
         if (buffer.remaining() < 1) throw new TokenInvalidException("Token is invalid or tampered with, no cipherText found");
 
         // Extract cipherText
