@@ -157,6 +157,7 @@ public class FileUtility {
      */
     @NotNull
     public static List<String> getResourceFiles(@NotNull String resourcePath) {
+        if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
         if (!resourcePath.endsWith("/")) resourcePath += "/";
         final List<String> files = new ArrayList<>();
 
