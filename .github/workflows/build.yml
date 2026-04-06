@@ -18,3 +18,4 @@ jobs:
     uses: srnyx/tools/.github/workflows/maven_publish.yml@main
     with:
       name: "srnyx's Java Utilities"
+    secrets: inherit
