@@ -1,4 +1,4 @@
-name: Build
+name: Maven Publish
 on:
   push:
     branches:
@@ -15,6 +15,6 @@ on:
 
 jobs:
   build:
-    uses: srnyx/tools/.github/workflows/build.yml@main
+    uses: srnyx/tools/.github/workflows/maven_publish.yml@main
     with:
       name: "srnyx's Java Utilities"
