@@ -102,7 +102,6 @@ public class Encryptor {
             cipher.init(mode, secret, spec);
             return cipher.doFinal(token);
         } catch (final Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
