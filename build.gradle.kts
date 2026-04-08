@@ -14,7 +14,7 @@ plugins {
 
 setupJava(JavaSetupConfig(
     group = "xyz.srnyx",
-    version = "2.0.0",
+    version = "3.0.0",
     description = "General Java utility library for srnyx's projects",
     javaVersion = JavaVersion.VERSION_1_8))
 
@@ -24,9 +24,8 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.3.1") // Use this specific version for Spigot
 }
 
-setupPublishingEnv(
-    publishingSimpleConfig(
-        artifactId = "java-utilities",
-        url = "https://java-utilities.srnyx.com",
-        licenses = listOf(LicenseData.MIT),
-        developers = listOf(DeveloperData.srnyx)))
+setupPublishingEnv(publishingSimpleConfig(
+    artifactId = "java-utilities",
+    url = "https://java-utilities.srnyx.com",
+    licenses = listOf(LicenseData.MIT),
+    developers = listOf(DeveloperData.srnyx)))
