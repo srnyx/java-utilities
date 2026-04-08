@@ -1,4 +1,4 @@
-name: Maven Publish
+name: Maven Publish (Snapshots)
 on:
   push:
     branches:
@@ -18,4 +18,5 @@ jobs:
     uses: srnyx/tools/.github/workflows/maven_publish.yml@main
     with:
       name: "srnyx's Java Utilities"
+      channel: snapshots
     secrets: inherit
