@@ -1,30 +1,30 @@
-# srnyx's Java Utilities [![Release](https://jitpack.io/v/srnyx/java-utilities.svg)](https://jitpack.io/#xyz.srnyx/java-utilities)
+# srnyx's Java Utilities [![Release](https://repo.srnyx.com/api/badge/latest/releases/xyz/srnyx/java-utilities?color=006d82&name=Reposilite)](https://repo.srnyx.com/#/releases/xyz/srnyx/java-utilities)
 
 A general Java utility library for srnyx's projects
 
 ### Wiki / Javadocs
 
 - **Wiki:** [github.com/srnyx/java-utilities/wiki](https://github.com/srnyx/java-utilities/wiki)
-- **Javadocs:** [javadoc.jitpack.io/xyz/srnyx/java-utilities/latest/javadoc/index.html](https://javadoc.jitpack.io/xyz/srnyx/java-utilities/latest/javadoc/index.html)
+- **Javadocs:** [repo.srnyx.com/javadoc/releases/xyz/srnyx/java-utilities/latest](https://repo.srnyx.com/javadoc/releases/xyz/srnyx/java-utilities/latest)
 
 ## Importing
 
-You can import the library using [Jitpack](https://jitpack.io/#xyz.srnyx/java-utilities). Make sure to replace `VERSION` with the version you want. You **MUST** use `implementation`.
+You can import the library using [Reposilite](https://repo.srnyx.com/#/releases/xyz/srnyx/java-utilities). Make sure to replace `VERSION` with the version you want.
 
 - **Gradle Kotlin** (`build.gradle.kts`)**:**
 ```kotlin
 // Required plugins
 plugins { 
   java
-  id("com.github.johnrengelman.shadow") version "8.1.1" // https://github.com/johnrengelman/shadow/releases/latest
+  id("com.gradleup.shadow") version "8.3.9" // https://github.com/GradleUp/shadow/releases/latest
 }
-// Jitpack repository
+// Reposilite repository
 repositories { 
-  maven("https://jitpack.io")
+  maven("https://repo.srnyx.com/releases/")
 }
-// Lazy Library dependency declaration
+// Java Utilities dependency declaration
 dependencies {
-  implementation("xyz.srnyx", "java-utilities", "VERSION")
+  implementation("xyz.srnyx:java-utilities:VERSION")
 }
 ```
 - **Gradle Groovy** (`build.gradle`)**:**
@@ -32,13 +32,13 @@ dependencies {
 // Required plugins
 plugins {
   id 'java'
-  id 'com.github.johnrengelman.shadow' version '8.1.1' // https://github.com/johnrengelman/shadow/releases/latest
+  id 'com.gradleup.shadow' version '8.3.9' // https://github.com/GradleUp/shadow/releases/latest
 }
-// Jitpack repository
+// Reposilite repository
 repositories {
-  maven { url = 'https://jitpack.io' }
+  maven { url = 'https://repo.srnyx.com/releases/' }
 }
-// Lazy Library dependency declaration
+// Java Utilities dependency declaration
 dependencies {
   implementation 'xyz.srnyx:java-utilities:VERSION'
 }
@@ -75,16 +75,16 @@ dependencies {
     </plugins>
   </build>
   ```
-    * Jitpack repository
+    * Reposilite repository
   ```xml
    <repositories>
         <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
+            <id>srnyx</id>
+            <url>https://repo.srnyx.com/releases/</url>
         </repository>
     </repositories>
   ```
-    * Lazy Library dependency declaration
+    * Java Utilities dependency declaration
   ```xml
     <dependencies>
         <dependency>
