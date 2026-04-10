@@ -11,6 +11,9 @@ import xyz.srnyx.javautilities.MiscUtility;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -155,6 +158,30 @@ public class Mapper {
         // Parse UUID
         final String finalString = string;
         return MiscUtility.handleException(() -> UUID.fromString(finalString), IllegalArgumentException.class);
+    }
+
+    /**
+     * Converts an {@link Object} to an {@link Instant}
+     *
+     * @param   object  the {@link Object} to convert
+     *
+     * @return          the {@link Instant} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<Instant> toInstant(@Nullable Object object) {
+        return object == null ? Optional.empty() : MiscUtility.handleException(() -> Instant.parse(object.toString()), DateTimeParseException.class);
+    }
+
+    /**
+     * Converts an {@link Instant} to a {@link Date}
+     *
+     * @param   instant the {@link Instant} to convert
+     *
+     * @return          the converted {@link Date} or {@link Optional#empty()}
+     */
+    @NotNull
+    public static Optional<Date> instantToDate(@Nullable Instant instant) {
+        return instant == null ? Optional.empty() : MiscUtility.handleException(() -> Date.from(instant), IllegalArgumentException.class);
     }
 
     /**
