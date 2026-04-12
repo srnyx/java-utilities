@@ -1,7 +1,11 @@
 package xyz.srnyx.javautilities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -191,6 +196,39 @@ public class FileUtility {
         }
 
         return files;
+    }
+
+    /**
+     * Gets the average color of an image from an {@link InputStream}
+     *
+     * @param   inputStream the input stream of the image
+     *
+     * @return              the average color of the image as an RGB integer, or null if the image couldn't be read
+     */
+    @Nullable
+    public static Integer getAverageImageColor(@NotNull InputStream inputStream) {
+        try {
+            // Read image
+            final BufferedImage image = ImageIO.read(inputStream);
+            if (image == null) return null;
+
+            // Get average color
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            for (int x = 0; x < image.getWidth(); x++) for (int y = 0; y < image.getHeight(); y++) {
+                final Color color = new Color(image.getRGB(x, y) & 0xFFFFFF); // Mask to ignore alpha
+                red += color.getRed();
+                green += color.getGreen();
+                blue += color.getBlue();
+            }
+
+            final int pixelCount = image.getWidth() * image.getHeight();
+            return new Color(red / pixelCount, green / pixelCount, blue / pixelCount).getRGB();
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
