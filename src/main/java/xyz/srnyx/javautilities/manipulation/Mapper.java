@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.javautilities.MiscUtility;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -161,6 +162,37 @@ public class Mapper {
     }
 
     /**
+     * Converts an {@link Object} to a {@link Color} by hashing its string representation
+     *
+     * @param   string  the {@link Object} to convert
+     *
+     * @return          the generated {@link Color}
+     */
+    @NotNull
+    public static Color toColor(@NotNull Object string) {
+        final int hash = string.hashCode();
+        return new Color(
+                (hash & 0xFF0000) >> 16,
+                (hash & 0x00FF00) >> 8,
+                hash & 0x0000FF);
+    }
+
+    /**
+     * Converts a {@link String} to an {@link Enum} value of the specified class
+     *
+     * @param   name        the name of the {@link Enum} value to convert
+     * @param   enumClass   the {@link Class} of the {@link Enum} to convert to
+     *
+     * @return              an {@link Optional} containing the {@link Enum} value if it exists, otherwise {@link Optional#empty()}
+     *
+     * @param   <T>         the type of the {@link Enum}
+     */
+    @NotNull
+    public static <T extends Enum<T>> Optional<T> toEnum(@Nullable String name, @NotNull Class<T> enumClass) {
+        return name == null || name.isEmpty() ? Optional.empty() : MiscUtility.handleException(() -> Enum.valueOf(enumClass, name.toUpperCase()), IllegalArgumentException.class);
+    }
+
+    /**
      * Converts an {@link Object} to an {@link Instant}
      *
      * @param   object  the {@link Object} to convert
@@ -182,21 +214,6 @@ public class Mapper {
     @NotNull
     public static Optional<Date> instantToDate(@Nullable Instant instant) {
         return instant == null ? Optional.empty() : MiscUtility.handleException(() -> Date.from(instant), IllegalArgumentException.class);
-    }
-
-    /**
-     * Converts a {@link String} to an {@link Enum} value of the specified class
-     *
-     * @param   name        the name of the {@link Enum} value to convert
-     * @param   enumClass   the {@link Class} of the {@link Enum} to convert to
-     *
-     * @return              an {@link Optional} containing the {@link Enum} value if it exists, otherwise {@link Optional#empty()}
-     *
-     * @param   <T>         the type of the {@link Enum}
-     */
-    @NotNull
-    public static <T extends Enum<T>> Optional<T> toEnum(@Nullable String name, @NotNull Class<T> enumClass) {
-        return name == null || name.isEmpty() ? Optional.empty() : MiscUtility.handleException(() -> Enum.valueOf(enumClass, name.toUpperCase()), IllegalArgumentException.class);
     }
 
     /**
