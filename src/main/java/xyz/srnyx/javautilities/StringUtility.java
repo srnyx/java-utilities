@@ -2,15 +2,28 @@ package xyz.srnyx.javautilities;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * General utility methods for {@link String}s and anything else related
  */
 public class StringUtility {
+    /**
+     * A set of whitespace characters that are not included in {@link Character#isWhitespace(char)} but should be
+     */
+    @NotNull @Unmodifiable public static final Set<Character> BLANK;
+    static {
+        final Set<Character> blank = new HashSet<>();
+        blank.add('\u200E');
+        BLANK = Collections.unmodifiableSet(blank);
+    }
+
     /**
      * Repeats a {@link CharSequence} a given amount of times
      *
@@ -62,6 +75,22 @@ public class StringUtility {
     public static String shorten(@NotNull String string, int length) {
         if (length < 3) throw new IllegalArgumentException("Length must be at least 3");
         return string.length() + 3 > length ? string.substring(0, length - 3) + "..." : string;
+    }
+
+    /**
+     * Checks if a {@link CharSequence} is blank (empty or only contains whitespace characters, including {@link #BLANK})
+     *
+     * @param   sequence    the {@link CharSequence} to check
+     *
+     * @return              true if the {@link CharSequence} is blank, false otherwise
+     */
+    public static boolean isBlank(@Nullable CharSequence sequence) {
+        if (sequence == null || sequence.length() == 0) return true;
+        for (int i = 0; i < sequence.length(); i++) {
+            final char character = sequence.charAt(i);
+            if (!Character.isWhitespace(character) && !BLANK.contains(character)) return false;
+        }
+        return true;
     }
 
     /**
