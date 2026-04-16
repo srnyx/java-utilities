@@ -78,6 +78,19 @@ public class StringUtility {
     }
 
     /**
+     * Shortens a string to a given length, adding {@code ...} at the end (included in the length), or returns null if the string is null
+     *
+     * @param   string  the string to shorten
+     * @param   length  the length to shorten to
+     *
+     * @return          the shortened string with {@code ...} at the end, or null if the string is null
+     */
+    @Nullable
+    public static String shortenElseNull(@Nullable String string, int length) {
+        return string == null ? null : shorten(string, length);
+    }
+
+    /**
      * Checks if a {@link CharSequence} is blank (empty or only contains whitespace characters, including {@link #BLANK})
      *
      * @param   sequence    the {@link CharSequence} to check
