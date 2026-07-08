@@ -1,4 +1,4 @@
-# srnyx's Java Utilities [![Release](https://repo.srnyx.com/api/badge/latest/releases/xyz/srnyx/java-utilities?color=006d82&name=Reposilite)](https://repo.srnyx.com/#/releases/xyz/srnyx/java-utilities)
+# srnyx's Java Utilities [![Release](https://repo.srnyx.com/api/badge/latest/releases/xyz/srnyx/java-utilities?color=006d82&name=Release)](https://repo.srnyx.com/#/releases/xyz/srnyx/java-utilities) [![Snapshot](https://repo.srnyx.com/api/badge/latest/snapshots/xyz/srnyx/java-utilities?color=006d82&name=Snapshot)](https://repo.srnyx.com/#/snapshots/xyz/srnyx/java-utilities)
 
 A general Java utility library for srnyx's projects
 
