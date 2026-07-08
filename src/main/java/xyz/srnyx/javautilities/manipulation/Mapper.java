@@ -292,6 +292,22 @@ public class Mapper {
     }
 
     /**
+     * Converts a {@link JsonElement} to the specified primitive wrapper class
+     * <br>Shortcut for {@link #convertJsonElement(JsonElement, Class) convertJsonElement(element, JsonPrimitive.class)} -> {@link #convertJsonPrimitive(JsonPrimitive, Class) convertJsonPrimitive(primitive, primitiveClass)}
+     *
+     * @param   element         the {@link JsonElement} to convert
+     * @param   primitiveClass  the primitive wrapper {@link Class} to convert to
+     *
+     * @return  an {@link Optional} containing the converted value if successful, otherwise {@link Optional#empty()}
+     *
+     * @param   <T> the type of the primitive wrapper class
+     */
+    @NotNull
+    public static <T> Optional<T> convertJsonElementToPrimitive(@Nullable JsonElement element, @NotNull Class<T> primitiveClass) {
+        return convertJsonElement(element, JsonPrimitive.class).flatMap(primitive -> convertJsonPrimitive(primitive, primitiveClass));
+    }
+
+    /**
      * Private constructor to prevent instantiation
      */
     private Mapper() {
