@@ -9,7 +9,7 @@ import xyz.srnyx.gradlegalaxy.utility.setupPublishingEnv
 plugins {
     java
     id("xyz.srnyx.gradle-galaxy") version "3.2.0"
-    id("com.gradleup.shadow") version "9.5.1"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 setupJava(JavaSetupConfig(
