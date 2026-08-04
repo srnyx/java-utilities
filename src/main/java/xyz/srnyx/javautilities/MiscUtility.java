@@ -1,7 +1,6 @@
 package xyz.srnyx.javautilities;
 
 import com.google.gson.JsonParser;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
