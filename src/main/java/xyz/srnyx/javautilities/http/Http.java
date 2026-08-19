@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.srnyx.javautilities.parents.Stringable;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
-public class Http {
+public class Http extends Stringable {
     @NotNull private final String userAgent; 
     private final boolean debug;
 
@@ -197,7 +198,7 @@ public class Http {
         return null;
     }
 
-    public static class Builder {
+    public static class Builder extends Stringable {
         @Nullable private String userAgent;
         private boolean debug = false;
         

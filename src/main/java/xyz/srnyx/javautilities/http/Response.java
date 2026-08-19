@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.srnyx.javautilities.manipulation.Mapper;
+import xyz.srnyx.javautilities.parents.Stringable;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 /**
  * Represents the response from an HTTP request
  */
-public class Response {
+public class Response extends Stringable {
     /**
      * The HTTP response code
      * <br>{@code null} = request failed
