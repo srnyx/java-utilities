@@ -9,6 +9,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -32,11 +35,46 @@ public class MiscUtility {
     /**
      * A {@link ScheduledExecutorService} for CPU intensive tasks (heavy computation, such as mathematical calculations or data processing)
      */
-    @NotNull public static final ScheduledExecutorService CPU_SCHEDULER = Executors.newScheduledThreadPool(AVAILABLE_PROCESSORS);
+    @NotNull public static final ScheduledExecutorService CPU_SCHEDULER = newLongLifeScheduler(AVAILABLE_PROCESSORS, "JU-CPU");
     /**
      * A {@link ScheduledExecutorService} for IO intensive tasks (waiting for external resources, such as reading/writing files, making network requests, or querying a database)
      */
-    @NotNull public static final ScheduledExecutorService IO_SCHEDULER = Executors.newScheduledThreadPool(AVAILABLE_PROCESSORS * 2);
+    @NotNull public static final ScheduledExecutorService IO_SCHEDULER = newLongLifeScheduler(AVAILABLE_PROCESSORS * 2, "JU-IO");
+
+    /**
+     * Creates a new {@link ScheduledExecutorService} with the specified number of threads and a custom thread name prefix.
+     * The threads are set as daemon threads, which means they will not prevent the JVM from exiting when the application is finished.
+     * A shutdown hook is also added to gracefully shut down the scheduler when the application exits.
+     *
+     * @param   threads the number of threads in the pool
+     * @param   name    the prefix for the thread names
+     *
+     * @return  a new {@link ScheduledExecutorService} instance
+     */
+    @NotNull
+    public static ScheduledExecutorService newLongLifeScheduler(int threads, @NotNull String name) {
+        final AtomicInteger counter = new AtomicInteger();
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(threads, r -> {
+            final Thread thread = new Thread(r, name + "-" + counter.incrementAndGet());
+            thread.setDaemon(true); // Daemon threads are automatically terminated when JVM exits
+            return thread;
+        });
+
+        // Prevents scheduler from executing existing delayed tasks after shutdown
+        ((ScheduledThreadPoolExecutor) scheduler).setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+
+        // Shutdown hook to gracefully shut down scheduler when application exits
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            scheduler.shutdown();
+            try {
+                scheduler.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupted status
+            }
+        }, name + "-ShutdownHook"));
+
+        return scheduler;
+    }
 
     /**
      * If specific throwables are thrown by the {@link Supplier}, {@code null} is returned
